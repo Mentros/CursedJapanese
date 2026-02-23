@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+h2 {
+  letter-spacing: 0.2px;
+  line-height: 1.25;
+}
+
+.app-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.app-badge {
+  width: fit-content;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4338ca;
+  background: linear-gradient(135deg, #dbeafe, #ede9fe);
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+.app-nav {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.nav-chip {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.nav-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -12px rgba(79, 70, 229, 0.8);
+}

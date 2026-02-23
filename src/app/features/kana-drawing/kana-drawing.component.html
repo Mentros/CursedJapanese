@@ -1,0 +1,94 @@
+<p-card header="Draw Kana" class="feature-card">
+  <div class="flex flex-column gap-4">
+    <div class="flex flex-wrap gap-2 align-items-center">
+      <span class="font-medium">Mode:</span>
+      <p-selectbutton
+        [options]="modeOptions"
+        [(ngModel)]="mode"
+        optionLabel="label"
+        optionValue="value"
+        (onChange)="onModeChange()"
+      />
+    </div>
+
+    @if (!modelReady) {
+      <div class="p-3 border-round surface-ground">
+        @if (modelError) {
+          {{ modelError }}
+        } @else {
+          Loading local recognizer...
+        }
+      </div>
+    }
+
+    <div class="hero-panel border-round p-4 text-center">
+      <div class="text-sm text-color-secondary mb-2">Draw the kana for this romaji:</div>
+      <div class="text-6xl font-bold mb-2">{{ currentPrompt.romaji }}</div>
+      <div class="text-sm text-color-secondary">Expected script: {{ currentPrompt.script }}</div>
+    </div>
+
+    <div class="flex justify-content-center">
+      <canvas
+        #drawCanvas
+        class="draw-canvas border-round border-1 surface-border"
+        (pointerdown)="onPointerDown($event)"
+        (pointermove)="onPointerMove($event)"
+        (pointerup)="onPointerUp($event)"
+        (pointerleave)="onPointerUp($event)"
+      ></canvas>
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <button pButton type="button" severity="secondary" label="Clear" icon="pi pi-eraser" (click)="clearCanvas()"></button>
+      <button
+        pButton
+        type="button"
+        label="Submit"
+        icon="pi pi-check"
+        [disabled]="checkedCurrent || !modelReady"
+        (click)="submitDrawing()"
+      ></button>
+      <button
+        pButton
+        type="button"
+        severity="help"
+        label="Next"
+        icon="pi pi-arrow-right"
+        (click)="nextQuestion()"
+      ></button>
+    </div>
+
+    <div class="text-sm text-color-secondary">Press Enter to submit, then Enter again for next.</div>
+
+    @if (feedback) {
+      <div class="p-3 border-round surface-ground" (keydown.enter)="onEnter($event)" tabindex="0">
+        {{ feedback }}
+        @if (bestGuess) {
+          <div class="mt-2 text-sm">Recognizer guess: {{ bestGuess }}</div>
+        }
+      </div>
+    }
+
+    <div class="grid">
+      <div class="col-12 md:col-4">
+        <p-card subheader="Session Correct">
+          <span class="text-2xl font-bold">{{ correct }}</span>
+        </p-card>
+      </div>
+      <div class="col-12 md:col-4">
+        <p-card subheader="Session Incorrect">
+          <span class="text-2xl font-bold">{{ incorrect }}</span>
+        </p-card>
+      </div>
+      <div class="col-12 md:col-4">
+        <p-card subheader="Answered">
+          <span class="text-2xl font-bold">{{ asked }}</span>
+        </p-card>
+      </div>
+    </div>
+
+    <p-card subheader="Weak symbols">
+      <span>{{ weakestPreview() }}</span>
+    </p-card>
+  </div>
+</p-card>

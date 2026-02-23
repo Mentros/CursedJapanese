@@ -1,0 +1,51 @@
+<p-confirmdialog />
+
+<p-card header="Progress" class="feature-card">
+  <div class="grid">
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card subheader="Cards Reviewed">
+        <div class="text-3xl font-bold">{{ reviewedCount() }}</div>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card subheader="Cards Due Now">
+        <div class="text-3xl font-bold">{{ dueNowCount() }}</div>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card subheader="Kana Accuracy">
+        <div class="text-3xl font-bold">{{ kanaAccuracy() }}%</div>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card subheader="Listening Attempted">
+        <div class="text-3xl font-bold">{{ listeningAttempted() }}</div>
+      </p-card>
+    </div>
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-card subheader="Listening Accuracy">
+        <div class="text-3xl font-bold">{{ listeningAccuracy() }}%</div>
+      </p-card>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    @if (lastReviewAt(); as lastReview) {
+      <p class="m-0 text-color-secondary">Last flashcard review: {{ lastReview | date: 'medium' }}</p>
+    } @else {
+      <p class="m-0 text-color-secondary">No flashcard reviews yet.</p>
+    }
+  </div>
+
+  <div class="mt-4">
+    <button
+      pButton
+      type="button"
+      severity="danger"
+      label="Reset all progress"
+      icon="pi pi-trash"
+      (click)="resetAllProgress($event)"
+    ></button>
+  </div>
+</p-card>
+

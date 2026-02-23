@@ -1,0 +1,137 @@
+<p-card header="Flashcards" class="feature-card">
+  <div class="flex flex-column gap-4">
+    <div class="flex flex-wrap align-items-center gap-2">
+      <span class="text-sm text-color-secondary">JLPT level:</span>
+      @for (level of jlptLevels; track level) {
+        <button
+          pButton
+          type="button"
+          [label]="level"
+          [severity]="selectedJlptLevel() === level ? 'primary' : 'secondary'"
+          [outlined]="selectedJlptLevel() !== level"
+          (click)="selectJlptLevel(level)"
+        ></button>
+      }
+    </div>
+
+    <div class="flex flex-wrap gap-2">
+      <p-tag severity="warn" [value]="'Level: ' + selectedJlptLevel()" />
+      <p-tag severity="info" [value]="'Due now: ' + dueCards().length" />
+      <p-tag severity="contrast" [value]="'Reviewed today: ' + reviewedThisSession()" />
+      <p-tag severity="success" [value]="'Seen cards: ' + countLearnedCards()" />
+      @if (sessionMode() === 'free') {
+        <p-tag severity="warn" value="Free session active" />
+      }
+    </div>
+
+    @if (currentCard(); as card) {
+      <div class="hero-panel flashcard-prompt-panel border-round p-4 text-center">
+        <div class="text-sm flashcard-prompt-meta mb-2">Japanese ({{ card.jlptLevel }})</div>
+        <div class="text-5xl font-bold mb-3 flashcard-prompt-text">{{ card.front }}</div>
+        @if (card.hint) {
+          <div class="text-sm flashcard-prompt-meta">Hint: {{ card.hint }}</div>
+        }
+      </div>
+
+      @if (currentCardKanjiBreakdown(); as kanjiBreakdown) {
+        @if (kanjiBreakdown.length) {
+          <p-card subheader="Kanji breakdown">
+            <div class="flex flex-column gap-2">
+              @for (item of kanjiBreakdown; track item.kanji) {
+                <div class="p-2 border-round surface-100">
+                  <span class="text-xl font-semibold">{{ item.kanji }}</span>
+                  @if (item.explanation) {
+                    <span class="ml-2">{{ item.explanation.meaning }}</span>
+                    <span class="ml-2 text-color-secondary">{{ item.explanation.note }}</span>
+                  } @else {
+                    <span class="ml-2 text-color-secondary">No explanation added yet.</span>
+                  }
+                </div>
+              }
+            </div>
+          </p-card>
+        }
+      }
+
+      <div class="flex flex-column md:flex-row gap-2">
+        <input
+          pInputText
+          class="w-full"
+          [ngModel]="writtenAnswer()"
+          (ngModelChange)="writtenAnswer.set($event)"
+          placeholder="Type the meaning in English"
+          [disabled]="answerChecked()"
+        />
+        <button
+          pButton
+          type="button"
+          label="Check"
+          icon="pi pi-check"
+          [disabled]="answerChecked()"
+          (click)="checkWrittenAnswer()"
+        ></button>
+        <button
+          pButton
+          type="button"
+          severity="secondary"
+          label="Reveal"
+          icon="pi pi-eye"
+          [disabled]="revealed()"
+          (click)="reveal()"
+        ></button>
+      </div>
+
+      @if (answerFeedback()) {
+        <div
+          class="p-3 border-round answer-feedback-panel"
+          [class.bg-green-100]="answerCorrect() === true"
+          [class.bg-red-100]="answerCorrect() === false"
+          [class.surface-ground]="answerCorrect() === null"
+        >
+          {{ answerFeedback() }}
+        </div>
+      }
+
+      @if (revealed()) {
+        <p-card subheader="Meaning">
+          <div class="text-2xl font-semibold flashcard-meaning-text">{{ card.back }}</div>
+        </p-card>
+
+        <div class="flex flex-wrap gap-2">
+          <button pButton type="button" severity="danger" label="Again" (click)="grade('again')"></button>
+          <button pButton type="button" severity="warn" label="Hard" (click)="grade('hard')"></button>
+          <button pButton type="button" severity="success" label="Good" (click)="grade('good')"></button>
+          <button pButton type="button" severity="help" label="Easy" (click)="grade('easy')"></button>
+        </div>
+
+        @if (cardProgress(); as progress) {
+          <div class="text-sm text-color-secondary">
+            Interval: {{ progress.intervalDays }} day(s)
+          </div>
+        }
+      }
+    } @else {
+      <p-card subheader="You are done for now">
+        <p class="m-0">
+          No {{ selectedJlptLevel() }} cards are due at the moment.
+          @if (nextDueAt(); as nextDue) {
+            Next review: {{ nextDue | date: 'medium' }}.
+          } @else {
+            Start grading cards to build your schedule.
+          }
+        </p>
+        <div class="mt-3">
+          <button
+            pButton
+            type="button"
+            severity="secondary"
+            label="Start Session Now"
+            icon="pi pi-refresh"
+            (click)="startFreeSession()"
+          ></button>
+        </div>
+      </p-card>
+    }
+  </div>
+</p-card>
+
